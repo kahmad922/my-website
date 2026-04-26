@@ -737,6 +737,70 @@
        ======== DESTINATIONS PAGE ========
        ============================================= */
     .destinations-page { background: var(--off-white); padding: 90px 0; }
+
+    /* --- Destination Search Bar --- */
+    .dest-search-wrap {
+      max-width: 560px;
+      margin: 0 auto 40px;
+      position: relative;
+    }
+    .dest-search-wrap svg {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px; height: 20px;
+      fill: var(--grey-mid);
+      pointer-events: none;
+    }
+    #dest-search {
+      width: 100%;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--text-dark);
+      background: var(--white);
+      border: 2px solid var(--grey-light);
+      border-radius: 50px;
+      padding: 14px 20px 14px 50px;
+      outline: none;
+      box-shadow: var(--shadow-sm);
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    #dest-search:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 4px rgba(27,184,212,0.15);
+    }
+    #dest-search::placeholder { color: var(--grey-mid); }
+    .dest-search-clear {
+      position: absolute;
+      right: 16px; top: 50%;
+      transform: translateY(-50%);
+      background: var(--grey-light);
+      border: none;
+      border-radius: 50%;
+      width: 24px; height: 24px;
+      cursor: pointer;
+      font-size: 13px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      color: var(--navy);
+    }
+    .dest-search-clear.visible { display: flex; }
+    #dest-no-results {
+      text-align: center;
+      padding: 60px 0;
+      display: none;
+    }
+    #dest-no-results p { font-size: 1rem; color: var(--grey-mid); }
+    .dest-count-badge {
+      text-align: center;
+      margin-bottom: 28px;
+      font-size: 0.85rem;
+      color: var(--grey-mid);
+    }
+    .dest-count-badge strong { color: var(--navy); }
+
     .dest-page-note {
       text-align: center;
       background: var(--navy);
@@ -1587,200 +1651,611 @@
     <section class="destinations-page">
       <div class="container">
 
-        <!-- Global coverage statement -->
+        <!-- Search Bar -->
+        <div class="dest-search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="dest-search" placeholder="Search destinations... e.g. Japan, Italy, Bali" oninput="filterDestinations()" autocomplete="off"/>
+          <button class="dest-search-clear" id="dest-clear" onclick="clearDestSearch()" title="Clear">&#x2715;</button>
+        </div>
+
+        <div class="dest-count-badge"><strong id="dest-shown-count">49</strong> destinations available worldwide</div>
+
         <div class="dest-page-note">
           ✈ <strong>We provide flight tickets and travel services to all countries worldwide</strong> — not just the destinations listed here. Contact us via WhatsApp for any country.
         </div>
 
-        <!-- Full destinations grid (12 destinations) -->
-        <div class="dest-full-grid">
+        <div id="dest-no-results" style="text-align:center;padding:60px 0;display:none;">
+          <p style="font-size:1rem;color:var(--grey-mid);">🌍 No destinations match your search. <a href="https://wa.me/971582120609?text=I%27m%20looking%20for%20travel%20to%20a%20specific%20destination." target="_blank" style="color:var(--teal);">Ask us on WhatsApp →</a></p>
+        </div>
 
-          <!-- 1. UAE -->
-          <div class="dest-full-card fade-in">
+        <!-- Full destinations grid (49 destinations) -->
+        <div class="dest-full-grid" id="dest-full-grid">
+
+          <div class="dest-full-card fade-in" data-country="UAE Dubai & Abu Dhabi">
             <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=700&auto=format&fit=crop&q=80" alt="UAE" class="dest-full-img" loading="lazy"/>
             <div class="dest-full-body">
               <p class="dest-country">🇦🇪 UAE</p>
               <h3 class="dest-name">Dubai & Abu Dhabi</h3>
               <p class="dest-desc">A gleaming metropolis rising from the desert — luxury shopping, record-breaking architecture, cultural heritage, and year-round sun.</p>
-              <div class="dest-highlights">
-                <span class="dest-tag">Burj Khalifa</span>
-                <span class="dest-tag">Desert Safari</span>
-                <span class="dest-tag">Gold Souk</span>
-                <span class="dest-tag">Louvre Abu Dhabi</span>
-              </div>
+              <div class="dest-highlights"><span class="dest-tag">Burj Khalifa</span><span class="dest-tag">Desert Safari</span><span class="dest-tag">Gold Souk</span><span class="dest-tag">Louvre Abu Dhabi</span></div>
               <p class="dest-best-time"><strong>Best Time:</strong> November – March</p>
-              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20UAE." target="_blank" class="dest-wa-link">
-                <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
-                Inquire via WhatsApp
-              </a>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20UAE." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
             </div>
           </div>
 
-          <!-- 2. Turkey -->
-          <div class="dest-full-card fade-in">
+          <div class="dest-full-card fade-in" data-country="Turkey Istanbul & Cappadocia">
             <img src="https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=700&auto=format&fit=crop&q=80" alt="Turkey" class="dest-full-img" loading="lazy"/>
             <div class="dest-full-body">
               <p class="dest-country">🇹🇷 Turkey</p>
               <h3 class="dest-name">Istanbul & Cappadocia</h3>
-              <p class="dest-desc">Straddling two continents, Turkey captivates with its ancient mosques, vibrant bazaars, surreal landscapes, and legendary cuisine.</p>
-              <div class="dest-highlights">
-                <span class="dest-tag">Hagia Sophia</span>
-                <span class="dest-tag">Hot Air Balloons</span>
-                <span class="dest-tag">Grand Bazaar</span>
-                <span class="dest-tag">Pamukkale</span>
-              </div>
+              <p class="dest-desc">Straddling two continents, Turkey captivates with ancient mosques, vibrant bazaars, surreal landscapes, and legendary cuisine.</p>
+              <div class="dest-highlights"><span class="dest-tag">Hagia Sophia</span><span class="dest-tag">Hot Air Balloons</span><span class="dest-tag">Grand Bazaar</span><span class="dest-tag">Pamukkale</span></div>
               <p class="dest-best-time"><strong>Best Time:</strong> April – June, September – November</p>
-              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Turkey." target="_blank" class="dest-wa-link">
-                <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
-                Inquire via WhatsApp
-              </a>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Turkey." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
             </div>
           </div>
 
-          <!-- 3. UK -->
-          <div class="dest-full-card fade-in">
-            <img src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=700&auto=format&fit=crop&q=80" alt="UK" class="dest-full-img" loading="lazy"/>
+          <div class="dest-full-card fade-in" data-country="United Kingdom London & Scotland">
+            <img src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=700&auto=format&fit=crop&q=80" alt="United Kingdom" class="dest-full-img" loading="lazy"/>
             <div class="dest-full-body">
               <p class="dest-country">🇬🇧 United Kingdom</p>
               <h3 class="dest-name">London & Scotland</h3>
               <p class="dest-desc">Home to royalty, world-class museums, centuries of history, and some of the world's most beloved landscapes.</p>
-              <div class="dest-highlights">
-                <span class="dest-tag">Big Ben</span>
-                <span class="dest-tag">Edinburgh Castle</span>
-                <span class="dest-tag">British Museum</span>
-                <span class="dest-tag">Highlands</span>
-              </div>
+              <div class="dest-highlights"><span class="dest-tag">Big Ben</span><span class="dest-tag">Edinburgh Castle</span><span class="dest-tag">British Museum</span><span class="dest-tag">Highlands</span></div>
               <p class="dest-best-time"><strong>Best Time:</strong> May – September</p>
-              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20the%20UK." target="_blank" class="dest-wa-link">
-                <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
-                Inquire via WhatsApp
-              </a>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20the%20UK." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
             </div>
           </div>
 
-          <!-- 4. Malaysia -->
-          <div class="dest-full-card fade-in">
+          <div class="dest-full-card fade-in" data-country="Malaysia Kuala Lumpur & Langkawi">
             <img src="https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=700&auto=format&fit=crop&q=80" alt="Malaysia" class="dest-full-img" loading="lazy"/>
             <div class="dest-full-body">
               <p class="dest-country">🇲🇾 Malaysia</p>
               <h3 class="dest-name">Kuala Lumpur & Langkawi</h3>
               <p class="dest-desc">A dazzling mix of cultures, rainforest adventures, pristine beaches, and a cosmopolitan capital that never sleeps.</p>
-              <div class="dest-highlights">
-                <span class="dest-tag">Petronas Towers</span>
-                <span class="dest-tag">Batu Caves</span>
-                <span class="dest-tag">Langkawi Beaches</span>
-                <span class="dest-tag">Street Food</span>
-              </div>
+              <div class="dest-highlights"><span class="dest-tag">Petronas Towers</span><span class="dest-tag">Batu Caves</span><span class="dest-tag">Langkawi Beaches</span><span class="dest-tag">Street Food</span></div>
               <p class="dest-best-time"><strong>Best Time:</strong> March – October</p>
-              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Malaysia." target="_blank" class="dest-wa-link">
-                <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
-                Inquire via WhatsApp
-              </a>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Malaysia." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
             </div>
           </div>
 
-          <!-- 5. France -->
-          <div class="dest-full-card fade-in">
+          <div class="dest-full-card fade-in" data-country="France Paris & the Riviera">
             <img src="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=700&auto=format&fit=crop&q=80" alt="France" class="dest-full-img" loading="lazy"/>
             <div class="dest-full-body">
               <p class="dest-country">🇫🇷 France</p>
               <h3 class="dest-name">Paris & the Riviera</h3>
               <p class="dest-desc">The romance of Paris, the glamour of Nice, the wines of Bordeaux — France is the world's most visited country for a reason.</p>
-              <div class="dest-highlights">
-                <span class="dest-tag">Eiffel Tower</span>
-                <span class="dest-tag">Louvre Museum</span>
-                <span class="dest-tag">Côte d'Azur</span>
-                <span class="dest-tag">Mont Saint-Michel</span>
-              </div>
+              <div class="dest-highlights"><span class="dest-tag">Eiffel Tower</span><span class="dest-tag">Louvre Museum</span><span class="dest-tag">Côte d'Azur</span><span class="dest-tag">Mont Saint-Michel</span></div>
               <p class="dest-best-time"><strong>Best Time:</strong> April – June, September – October</p>
-              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20France." target="_blank" class="dest-wa-link">
-                <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
-                Inquire via WhatsApp
-              </a>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20France." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
             </div>
           </div>
 
-          <!-- 6. USA -->
-          <div class="dest-full-card fade-in">
+          <div class="dest-full-card fade-in" data-country="USA New York & Beyond">
             <img src="https://images.unsplash.com/photo-1485738422979-f5c462d49f74?w=700&auto=format&fit=crop&q=80" alt="USA" class="dest-full-img" loading="lazy"/>
             <div class="dest-full-body">
               <p class="dest-country">🇺🇸 USA</p>
               <h3 class="dest-name">New York & Beyond</h3>
-              <p class="dest-desc">From coast to coast, the United States offers dazzling cities, natural wonders, and experiences that scale from humble road trips to world-class luxury.</p>
-              <div class="dest-highlights">
-                <span class="dest-tag">Times Square</span>
-                <span class="dest-tag">Grand Canyon</span>
-                <span class="dest-tag">Hollywood</span>
-                <span class="dest-tag">Niagara Falls</span>
-              </div>
+              <p class="dest-desc">From coast to coast, the United States offers dazzling cities, natural wonders, and experiences for every traveler.</p>
+              <div class="dest-highlights"><span class="dest-tag">Times Square</span><span class="dest-tag">Grand Canyon</span><span class="dest-tag">Hollywood</span><span class="dest-tag">Niagara Falls</span></div>
               <p class="dest-best-time"><strong>Best Time:</strong> March – May, September – November</p>
-              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20the%20USA." target="_blank" class="dest-wa-link">
-                <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
-                Inquire via WhatsApp
-              </a>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20the%20USA." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
             </div>
           </div>
 
-          <!-- 7. Saudi Arabia -->
-          <div class="dest-full-card fade-in">
+          <div class="dest-full-card fade-in" data-country="Saudi Arabia Riyadh & Al-Ula">
             <img src="https://images.unsplash.com/photo-1578895101408-1a36b834405b?w=700&auto=format&fit=crop&q=80" alt="Saudi Arabia" class="dest-full-img" loading="lazy"/>
             <div class="dest-full-body">
               <p class="dest-country">🇸🇦 Saudi Arabia</p>
               <h3 class="dest-name">Riyadh & Al-Ula</h3>
-              <p class="dest-desc">A kingdom opening its doors — ancient Nabataean ruins, futuristic city projects, and the warmth of Saudi hospitality await.</p>
-              <div class="dest-highlights">
-                <span class="dest-tag">Al-Ula</span>
-                <span class="dest-tag">NEOM</span>
-                <span class="dest-tag">Diriyah</span>
-                <span class="dest-tag">Red Sea</span>
-              </div>
+              <p class="dest-desc">A kingdom opening its doors — ancient Nabataean ruins, futuristic city projects, and legendary Saudi hospitality.</p>
+              <div class="dest-highlights"><span class="dest-tag">Al-Ula</span><span class="dest-tag">NEOM</span><span class="dest-tag">Diriyah</span><span class="dest-tag">Red Sea</span></div>
               <p class="dest-best-time"><strong>Best Time:</strong> November – February</p>
-              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Saudi%20Arabia." target="_blank" class="dest-wa-link">
-                <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
-                Inquire via WhatsApp
-              </a>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Saudi%20Arabia." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
             </div>
           </div>
 
-          <!-- 8. India -->
-          <div class="dest-full-card fade-in">
+          <div class="dest-full-card fade-in" data-country="India Delhi, Agra & Kerala">
             <img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=700&auto=format&fit=crop&q=80" alt="India" class="dest-full-img" loading="lazy"/>
             <div class="dest-full-body">
               <p class="dest-country">🇮🇳 India</p>
               <h3 class="dest-name">Delhi, Agra & Kerala</h3>
               <p class="dest-desc">A continent of cultures — from the Taj Mahal's perfection to Kerala's backwaters and the spice-scented bazaars of Old Delhi.</p>
-              <div class="dest-highlights">
-                <span class="dest-tag">Taj Mahal</span>
-                <span class="dest-tag">Kerala Backwaters</span>
-                <span class="dest-tag">Rajasthan Forts</span>
-                <span class="dest-tag">Goa Beaches</span>
-              </div>
+              <div class="dest-highlights"><span class="dest-tag">Taj Mahal</span><span class="dest-tag">Kerala Backwaters</span><span class="dest-tag">Rajasthan Forts</span><span class="dest-tag">Goa Beaches</span></div>
               <p class="dest-best-time"><strong>Best Time:</strong> October – March</p>
-              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20India." target="_blank" class="dest-wa-link">
-                <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
-                Inquire via WhatsApp
-              </a>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20India." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
             </div>
           </div>
 
-          <!-- 9. Pakistan -->
-          <div class="dest-full-card fade-in">
+          <div class="dest-full-card fade-in" data-country="Pakistan Lahore, Islamabad & Hunza">
             <img src="https://images.unsplash.com/photo-1605640840605-14ac1855827b?w=700&auto=format&fit=crop&q=80" alt="Pakistan" class="dest-full-img" loading="lazy"/>
             <div class="dest-full-body">
               <p class="dest-country">🇵🇰 Pakistan</p>
               <h3 class="dest-name">Lahore, Islamabad & Hunza</h3>
               <p class="dest-desc">Stunning mountain ranges, Mughal heritage, and warm hospitality — Pakistan is an emerging gem for adventurous travelers.</p>
-              <div class="dest-highlights">
-                <span class="dest-tag">Hunza Valley</span>
-                <span class="dest-tag">Lahore Fort</span>
-                <span class="dest-tag">K2 Base Camp</span>
-                <span class="dest-tag">Mohenjo-daro</span>
-              </div>
+              <div class="dest-highlights"><span class="dest-tag">Hunza Valley</span><span class="dest-tag">Lahore Fort</span><span class="dest-tag">K2 Base Camp</span><span class="dest-tag">Mohenjo-daro</span></div>
               <p class="dest-best-time"><strong>Best Time:</strong> April – October</p>
-              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Pakistan." target="_blank" class="dest-wa-link">
-                <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
-                Inquire via WhatsApp
-              </a>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Pakistan." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Japan Tokyo & Kyoto">
+            <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=700&auto=format&fit=crop&q=80" alt="Japan" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇯🇵 Japan</p>
+              <h3 class="dest-name">Tokyo & Kyoto</h3>
+              <p class="dest-desc">Ancient temples beside neon-lit skyscrapers — Japan is a destination unlike any other, blending tradition and modernity perfectly.</p>
+              <div class="dest-highlights"><span class="dest-tag">Mount Fuji</span><span class="dest-tag">Fushimi Inari</span><span class="dest-tag">Shinjuku</span><span class="dest-tag">Cherry Blossoms</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> March – May, October – November</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Japan." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Indonesia Bali & Lombok">
+            <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=700&auto=format&fit=crop&q=80" alt="Indonesia" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇮🇩 Indonesia</p>
+              <h3 class="dest-name">Bali & Lombok</h3>
+              <p class="dest-desc">Emerald rice terraces, sacred temples, world-class surfing, and a warmth of spirit that draws travelers back again and again.</p>
+              <div class="dest-highlights"><span class="dest-tag">Tanah Lot Temple</span><span class="dest-tag">Ubud Rice Fields</span><span class="dest-tag">Mount Batur</span><span class="dest-tag">Gili Islands</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> May – September</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Indonesia." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Thailand Bangkok & Phuket">
+            <img src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=700&auto=format&fit=crop&q=80" alt="Thailand" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇹🇭 Thailand</p>
+              <h3 class="dest-name">Bangkok & Phuket</h3>
+              <p class="dest-desc">Golden temples, vibrant street markets, lush islands, and legendary cuisine — Thailand delivers paradise at every price point.</p>
+              <div class="dest-highlights"><span class="dest-tag">Grand Palace</span><span class="dest-tag">Phi Phi Islands</span><span class="dest-tag">Chiang Mai</span><span class="dest-tag">Floating Markets</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> November – April</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Thailand." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Greece Athens & Santorini">
+            <img src="https://images.unsplash.com/photo-1555993539-1732b0258235?w=700&auto=format&fit=crop&q=80" alt="Greece" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇬🇷 Greece</p>
+              <h3 class="dest-name">Athens & Santorini</h3>
+              <p class="dest-desc">Blue-domed churches over the Aegean, ancient ruins of the Acropolis, and fresh Mediterranean cuisine — Greece is timeless.</p>
+              <div class="dest-highlights"><span class="dest-tag">Acropolis</span><span class="dest-tag">Santorini Caldera</span><span class="dest-tag">Mykonos</span><span class="dest-tag">Meteora</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> May – October</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Greece." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Italy Rome, Venice & Amalfi">
+            <img src="https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=700&auto=format&fit=crop&q=80" alt="Italy" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇮🇹 Italy</p>
+              <h3 class="dest-name">Rome, Venice & Amalfi</h3>
+              <p class="dest-desc">Art, history, fashion, and food collide in the most beautiful country in Europe — Italy rewards every kind of traveler.</p>
+              <div class="dest-highlights"><span class="dest-tag">Colosseum</span><span class="dest-tag">Venice Canals</span><span class="dest-tag">Amalfi Coast</span><span class="dest-tag">Vatican</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> April – June, September – October</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Italy." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Spain Madrid & Barcelona">
+            <img src="https://images.unsplash.com/photo-1543783207-ec64e4d95325?w=700&auto=format&fit=crop&q=80" alt="Spain" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇪🇸 Spain</p>
+              <h3 class="dest-name">Madrid & Barcelona</h3>
+              <p class="dest-desc">Flamenco, Gaudí's masterpieces, sun-drenched beaches, and an unmatched food and nightlife culture.</p>
+              <div class="dest-highlights"><span class="dest-tag">Sagrada Familia</span><span class="dest-tag">Prado Museum</span><span class="dest-tag">Costa del Sol</span><span class="dest-tag">La Tomatina</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> April – June, September – November</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Spain." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Portugal Lisbon & Algarve">
+            <img src="https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=700&auto=format&fit=crop&q=80" alt="Portugal" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇵🇹 Portugal</p>
+              <h3 class="dest-name">Lisbon & Algarve</h3>
+              <p class="dest-desc">Europe's westernmost gem — tiled facades, Atlantic cliffs, world-class wine, and one of Europe's warmest welcomes.</p>
+              <div class="dest-highlights"><span class="dest-tag">Belem Tower</span><span class="dest-tag">Douro Valley</span><span class="dest-tag">Algarve Cliffs</span><span class="dest-tag">Sintra</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> April – October</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Portugal." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Morocco Marrakech & Fes">
+            <img src="https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=700&auto=format&fit=crop&q=80" alt="Morocco" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇲🇦 Morocco</p>
+              <h3 class="dest-name">Marrakech & Fes</h3>
+              <p class="dest-desc">Step into a living tapestry of colour — souks, riads, Sahara dunes, and snow-capped Atlas Mountains all in one country.</p>
+              <div class="dest-highlights"><span class="dest-tag">Djemaa el-Fna</span><span class="dest-tag">Sahara Desert</span><span class="dest-tag">Blue City Chefchaouen</span><span class="dest-tag">Hassan II Mosque</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> March – May, September – November</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Morocco." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Egypt Cairo & Luxor">
+            <img src="https://images.unsplash.com/photo-1539768942893-daf53e448371?w=700&auto=format&fit=crop&q=80" alt="Egypt" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇪🇬 Egypt</p>
+              <h3 class="dest-name">Cairo & Luxor</h3>
+              <p class="dest-desc">Walk in the shadow of the Pharaohs — the Great Pyramids, the Sphinx, and the Valley of the Kings are among mankind's greatest achievements.</p>
+              <div class="dest-highlights"><span class="dest-tag">Pyramids of Giza</span><span class="dest-tag">Luxor Temple</span><span class="dest-tag">Nile Cruise</span><span class="dest-tag">Karnak</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> October – April</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Egypt." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Singapore Singapore City">
+            <img src="https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=700&auto=format&fit=crop&q=80" alt="Singapore" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇸🇬 Singapore</p>
+              <h3 class="dest-name">Singapore City</h3>
+              <p class="dest-desc">A sparkling city-state where futuristic gardens meet colonial heritage, hawker centres, and world-class shopping.</p>
+              <div class="dest-highlights"><span class="dest-tag">Gardens by the Bay</span><span class="dest-tag">Marina Bay Sands</span><span class="dest-tag">Sentosa Island</span><span class="dest-tag">Hawker Centres</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> February – April</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Singapore." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="China Beijing & Shanghai">
+            <img src="https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=700&auto=format&fit=crop&q=80" alt="China" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇨🇳 China</p>
+              <h3 class="dest-name">Beijing & Shanghai</h3>
+              <p class="dest-desc">The Great Wall, the Forbidden City, futuristic Pudong skyline — China is a civilisation-spanning adventure.</p>
+              <div class="dest-highlights"><span class="dest-tag">Great Wall</span><span class="dest-tag">Forbidden City</span><span class="dest-tag">The Bund</span><span class="dest-tag">Zhangjiajie</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> April – May, September – October</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20China." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="South Korea Seoul & Jeju Island">
+            <img src="https://images.unsplash.com/photo-1538485399081-7191377e8241?w=700&auto=format&fit=crop&q=80" alt="South Korea" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇰🇷 South Korea</p>
+              <h3 class="dest-name">Seoul & Jeju Island</h3>
+              <p class="dest-desc">K-culture, ancient palaces, volcanic island beaches, and street food that rivals anywhere in Asia.</p>
+              <div class="dest-highlights"><span class="dest-tag">Gyeongbokgung Palace</span><span class="dest-tag">Jeju Haenyeo</span><span class="dest-tag">Bukchon Hanok</span><span class="dest-tag">DMZ</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> April – June, September – November</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20South%20Korea." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Netherlands Amsterdam & Tulip Fields">
+            <img src="https://images.unsplash.com/photo-1512470876302-972faa2aa9a4?w=700&auto=format&fit=crop&q=80" alt="Netherlands" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇳🇱 Netherlands</p>
+              <h3 class="dest-name">Amsterdam & Tulip Fields</h3>
+              <p class="dest-desc">Canal houses, world-class museums, cycling culture, and the world's most colourful spring flowers.</p>
+              <div class="dest-highlights"><span class="dest-tag">Anne Frank House</span><span class="dest-tag">Rijksmuseum</span><span class="dest-tag">Keukenhof Gardens</span><span class="dest-tag">Windmills</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> April – October</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Netherlands." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Switzerland Zurich, Geneva & Alps">
+            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&auto=format&fit=crop&q=80" alt="Switzerland" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇨🇭 Switzerland</p>
+              <h3 class="dest-name">Zurich, Geneva & Alps</h3>
+              <p class="dest-desc">Snow-capped peaks, pristine lakes, and charming medieval towns — Switzerland is Europe's most breathtaking natural stage.</p>
+              <div class="dest-highlights"><span class="dest-tag">Matterhorn</span><span class="dest-tag">Lake Geneva</span><span class="dest-tag">Jungfraujoch</span><span class="dest-tag">Lucerne</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> June – September, December – March</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Switzerland." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Austria Vienna & Salzburg">
+            <img src="https://images.unsplash.com/photo-1516550135131-fe3dcb0bedc3?w=700&auto=format&fit=crop&q=80" alt="Austria" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇦🇹 Austria</p>
+              <h3 class="dest-name">Vienna & Salzburg</h3>
+              <p class="dest-desc">Imperial palaces, Mozart's birthplace, Alpine meadows, and coffee houses that inspired the world.</p>
+              <div class="dest-highlights"><span class="dest-tag">Schönbrunn Palace</span><span class="dest-tag">Vienna State Opera</span><span class="dest-tag">Hallstatt</span><span class="dest-tag">Hohensalzburg</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> May – September, December</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Austria." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Australia Sydney & Melbourne">
+            <img src="https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=700&auto=format&fit=crop&q=80" alt="Australia" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇦🇺 Australia</p>
+              <h3 class="dest-name">Sydney & Melbourne</h3>
+              <p class="dest-desc">Iconic Opera House, Great Barrier Reef, vast Outback, and some of the world's most liveable cities.</p>
+              <div class="dest-highlights"><span class="dest-tag">Sydney Opera House</span><span class="dest-tag">Great Barrier Reef</span><span class="dest-tag">Uluru</span><span class="dest-tag">Great Ocean Road</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> September – November, March – May</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Australia." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="South Africa Cape Town & Safari">
+            <img src="https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=700&auto=format&fit=crop&q=80" alt="South Africa" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇿🇦 South Africa</p>
+              <h3 class="dest-name">Cape Town & Safari</h3>
+              <p class="dest-desc">The Rainbow Nation — dramatic cape scenery, Big Five safaris, vineyards, and one of the world's great cities.</p>
+              <div class="dest-highlights"><span class="dest-tag">Table Mountain</span><span class="dest-tag">Kruger National Park</span><span class="dest-tag">Cape Winelands</span><span class="dest-tag">Boulders Penguin Colony</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> November – February</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20South%20Africa." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Tanzania Serengeti & Zanzibar">
+            <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?w=700&auto=format&fit=crop&q=80" alt="Tanzania" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇹🇿 Tanzania</p>
+              <h3 class="dest-name">Serengeti & Zanzibar</h3>
+              <p class="dest-desc">The Great Migration, Kilimanjaro, and the spice-scented beaches of Zanzibar — Africa's most iconic journey.</p>
+              <div class="dest-highlights"><span class="dest-tag">Serengeti Migration</span><span class="dest-tag">Mount Kilimanjaro</span><span class="dest-tag">Stone Town</span><span class="dest-tag">Ngorongoro Crater</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> July – October</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Tanzania." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Kenya Nairobi & Masai Mara">
+            <img src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=700&auto=format&fit=crop&q=80" alt="Kenya" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇰🇪 Kenya</p>
+              <h3 class="dest-name">Nairobi & Masai Mara</h3>
+              <p class="dest-desc">Home to the world's greatest wildlife spectacle — the wildebeest migration — and warm Swahili coastal culture.</p>
+              <div class="dest-highlights"><span class="dest-tag">Masai Mara</span><span class="dest-tag">Amboseli</span><span class="dest-tag">Lake Nakuru</span><span class="dest-tag">Diani Beach</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> July – October</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Kenya." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Russia Moscow & St. Petersburg">
+            <img src="https://images.unsplash.com/photo-1513326738677-b964603b136d?w=700&auto=format&fit=crop&q=80" alt="Russia" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇷🇺 Russia</p>
+              <h3 class="dest-name">Moscow & St. Petersburg</h3>
+              <p class="dest-desc">The onion domes of the Kremlin, the opulence of the Hermitage, and the vast landscapes of the world's largest country.</p>
+              <div class="dest-highlights"><span class="dest-tag">Red Square</span><span class="dest-tag">Hermitage Museum</span><span class="dest-tag">Trans-Siberian Railway</span><span class="dest-tag">Lake Baikal</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> May – September</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Russia." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Brazil Rio de Janeiro & Amazon">
+            <img src="https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=700&auto=format&fit=crop&q=80" alt="Brazil" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇧🇷 Brazil</p>
+              <h3 class="dest-name">Rio de Janeiro & Amazon</h3>
+              <p class="dest-desc">Christ the Redeemer, Carnival, the Amazon rainforest, and Copacabana Beach — Brazil lives in colour.</p>
+              <div class="dest-highlights"><span class="dest-tag">Christ the Redeemer</span><span class="dest-tag">Amazon River</span><span class="dest-tag">Iguazu Falls</span><span class="dest-tag">Copacabana Beach</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> March – August</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Brazil." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Argentina Buenos Aires & Patagonia">
+            <img src="https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=700&auto=format&fit=crop&q=80" alt="Argentina" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇦🇷 Argentina</p>
+              <h3 class="dest-name">Buenos Aires & Patagonia</h3>
+              <p class="dest-desc">Passionate tango, world-class steak, Iguazú Falls, and the end-of-the-world drama of Patagonian glaciers.</p>
+              <div class="dest-highlights"><span class="dest-tag">Iguazú Falls</span><span class="dest-tag">Perito Moreno Glacier</span><span class="dest-tag">Buenos Aires</span><span class="dest-tag">Tierra del Fuego</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> October – April</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Argentina." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Peru Lima, Cusco & Machu Picchu">
+            <img src="https://images.unsplash.com/photo-1526392060635-9d6019884377?w=700&auto=format&fit=crop&q=80" alt="Peru" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇵🇪 Peru</p>
+              <h3 class="dest-name">Lima, Cusco & Machu Picchu</h3>
+              <p class="dest-desc">The sacred Incan citadel of Machu Picchu, the Amazon basin, and Lima's world-renowned culinary scene.</p>
+              <div class="dest-highlights"><span class="dest-tag">Machu Picchu</span><span class="dest-tag">Colca Canyon</span><span class="dest-tag">Sacred Valley</span><span class="dest-tag">Lake Titicaca</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> April – October</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Peru." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Canada Toronto, Vancouver & Rockies">
+            <img src="https://images.unsplash.com/photo-1517935706615-2717063c2225?w=700&auto=format&fit=crop&q=80" alt="Canada" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇨🇦 Canada</p>
+              <h3 class="dest-name">Toronto, Vancouver & Rockies</h3>
+              <p class="dest-desc">Maple-covered valleys, Rocky Mountain lakes, multicultural cities, and the magical Northern Lights.</p>
+              <div class="dest-highlights"><span class="dest-tag">Niagara Falls</span><span class="dest-tag">Banff National Park</span><span class="dest-tag">CN Tower</span><span class="dest-tag">Aurora Borealis</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> June – September, December – March</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Canada." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Mexico Mexico City & Cancún">
+            <img src="https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=700&auto=format&fit=crop&q=80" alt="Mexico" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇲🇽 Mexico</p>
+              <h3 class="dest-name">Mexico City & Cancún</h3>
+              <p class="dest-desc">Ancient Aztec pyramids, turquoise Caribbean waters, vibrant street food, and one of the world's richest cultures.</p>
+              <div class="dest-highlights"><span class="dest-tag">Chichen Itza</span><span class="dest-tag">Tulum</span><span class="dest-tag">Cenotes</span><span class="dest-tag">Mexico City</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> December – April</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Mexico." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Jordan Petra & Wadi Rum">
+            <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=700&auto=format&fit=crop&q=80" alt="Jordan" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇯🇴 Jordan</p>
+              <h3 class="dest-name">Petra & Wadi Rum</h3>
+              <p class="dest-desc">The rose-red city of Petra, the silence of Wadi Rum's Mars-like desert, and the healing waters of the Dead Sea.</p>
+              <div class="dest-highlights"><span class="dest-tag">Petra</span><span class="dest-tag">Wadi Rum</span><span class="dest-tag">Dead Sea</span><span class="dest-tag">Jerash</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> March – May, September – November</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Jordan." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Lebanon Beirut & Byblos">
+            <img src="https://images.unsplash.com/photo-1548048026-5a1a941d93d3?w=700&auto=format&fit=crop&q=80" alt="Lebanon" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇱🇧 Lebanon</p>
+              <h3 class="dest-name">Beirut & Byblos</h3>
+              <p class="dest-desc">The Paris of the Middle East — historic Phoenician sites, stunning mountain valleys, and a legendary hospitality tradition.</p>
+              <div class="dest-highlights"><span class="dest-tag">Byblos</span><span class="dest-tag">Jeita Grotto</span><span class="dest-tag">Baalbek</span><span class="dest-tag">Corniche Beirut</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> April – October</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Lebanon." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Oman Muscat & Wahiba Sands">
+            <img src="https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=700&auto=format&fit=crop&q=80" alt="Oman" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇴🇲 Oman</p>
+              <h3 class="dest-name">Muscat & Wahiba Sands</h3>
+              <p class="dest-desc">Arabia's best-kept secret — dramatic wadis, pristine beaches, rolling sand dunes, and gracious Omani hospitality.</p>
+              <div class="dest-highlights"><span class="dest-tag">Sultan Qaboos Mosque</span><span class="dest-tag">Wahiba Sands</span><span class="dest-tag">Musandam Fjords</span><span class="dest-tag">Nizwa Fort</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> October – March</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Oman." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Qatar Doha">
+            <img src="https://images.unsplash.com/photo-1615799998603-7c6270a45196?w=700&auto=format&fit=crop&q=80" alt="Qatar" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇶🇦 Qatar</p>
+              <h3 class="dest-name">Doha</h3>
+              <p class="dest-desc">A futuristic skyline on the Arabian Gulf — world-class museums, luxury souqs, and the most modern city in the Middle East.</p>
+              <div class="dest-highlights"><span class="dest-tag">Museum of Islamic Art</span><span class="dest-tag">Souq Waqif</span><span class="dest-tag">The Pearl</span><span class="dest-tag">Lusail City</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> November – March</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Qatar." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Kazakhstan Almaty & Astana">
+            <img src="https://images.unsplash.com/photo-1577086664693-894d8405334a?w=700&auto=format&fit=crop&q=80" alt="Kazakhstan" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇰🇿 Kazakhstan</p>
+              <h3 class="dest-name">Almaty & Astana</h3>
+              <p class="dest-desc">A vast Central Asian canvas of steppe, mountains, and a capital city that looks like the future.</p>
+              <div class="dest-highlights"><span class="dest-tag">Charyn Canyon</span><span class="dest-tag">Khan Shatyr</span><span class="dest-tag">Big Almaty Lake</span><span class="dest-tag">Nur-Sultan</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> May – September</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Kazakhstan." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Azerbaijan Baku & Gabala">
+            <img src="https://images.unsplash.com/photo-1601597111158-2fceff292cdc?w=700&auto=format&fit=crop&q=80" alt="Azerbaijan" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇦🇿 Azerbaijan</p>
+              <h3 class="dest-name">Baku & Gabala</h3>
+              <p class="dest-desc">Fire temples, mud volcanoes, a medieval walled city, and a skyline of futuristic flame towers.</p>
+              <div class="dest-highlights"><span class="dest-tag">Old City Baku</span><span class="dest-tag">Flame Towers</span><span class="dest-tag">Gobustan</span><span class="dest-tag">Sheki</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> April – June, September – October</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Azerbaijan." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Vietnam Hanoi, Hoi An & Ha Long Bay">
+            <img src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=700&auto=format&fit=crop&q=80" alt="Vietnam" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇻🇳 Vietnam</p>
+              <h3 class="dest-name">Hanoi, Hoi An & Ha Long Bay</h3>
+              <p class="dest-desc">Limestone karsts rising from jade waters, ancient lantern-lit towns, and a cuisine that has conquered the world.</p>
+              <div class="dest-highlights"><span class="dest-tag">Ha Long Bay</span><span class="dest-tag">Hoi An</span><span class="dest-tag">Ho Chi Minh City</span><span class="dest-tag">Sapa Terraces</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> November – April</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Vietnam." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Philippines Manila & Palawan">
+            <img src="https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=700&auto=format&fit=crop&q=80" alt="Philippines" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇵🇭 Philippines</p>
+              <h3 class="dest-name">Manila & Palawan</h3>
+              <p class="dest-desc">Over 7,000 islands — pristine lagoons, world-record coral reefs, and some of the friendliest people on Earth.</p>
+              <div class="dest-highlights"><span class="dest-tag">Palawan</span><span class="dest-tag">Chocolate Hills</span><span class="dest-tag">Tubbataha Reef</span><span class="dest-tag">Intramuros</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> November – May</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Philippines." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Maldives North Malé Atoll">
+            <img src="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=700&auto=format&fit=crop&q=80" alt="Maldives" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇲🇻 Maldives</p>
+              <h3 class="dest-name">North Malé Atoll</h3>
+              <p class="dest-desc">Overwater bungalows, fluorescent coral gardens, and some of the clearest water on the planet — pure paradise.</p>
+              <div class="dest-highlights"><span class="dest-tag">Overwater Villas</span><span class="dest-tag">Coral Reefs</span><span class="dest-tag">Dolphin Watching</span><span class="dest-tag">Sunset Cruises</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> November – April</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Maldives." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Sri Lanka Colombo, Kandy & Galle">
+            <img src="https://images.unsplash.com/photo-1578728977048-e22e4a1b1a07?w=700&auto=format&fit=crop&q=80" alt="Sri Lanka" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇱🇰 Sri Lanka</p>
+              <h3 class="dest-name">Colombo, Kandy & Galle</h3>
+              <p class="dest-desc">Spice gardens, ancient temples, leopard safaris, and colonial fort towns on a teardrop island of extraordinary beauty.</p>
+              <div class="dest-highlights"><span class="dest-tag">Sigiriya Rock</span><span class="dest-tag">Temple of the Tooth</span><span class="dest-tag">Ella Train Ride</span><span class="dest-tag">Yala Safari</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> December – March</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Sri%20Lanka." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Nepal Kathmandu & Himalayas">
+            <img src="https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=700&auto=format&fit=crop&q=80" alt="Nepal" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇳🇵 Nepal</p>
+              <h3 class="dest-name">Kathmandu & Himalayas</h3>
+              <p class="dest-desc">Home to 8 of the world's 10 highest peaks — trek through Sherpa villages to the roof of the world.</p>
+              <div class="dest-highlights"><span class="dest-tag">Everest Base Camp</span><span class="dest-tag">Pokhara</span><span class="dest-tag">Annapurna Circuit</span><span class="dest-tag">Pashupatinath</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> October – November, March – May</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Nepal." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Uzbekistan Samarkand & Bukhara">
+            <img src="https://images.unsplash.com/photo-1627389955646-6596047473d7?w=700&auto=format&fit=crop&q=80" alt="Uzbekistan" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇺🇿 Uzbekistan</p>
+              <h3 class="dest-name">Samarkand & Bukhara</h3>
+              <p class="dest-desc">The Silk Road comes alive in the turquoise-tiled domes, ancient madrasas, and timeless desert cities of Uzbekistan.</p>
+              <div class="dest-highlights"><span class="dest-tag">Registan Square</span><span class="dest-tag">Bukhara Old City</span><span class="dest-tag">Shah-i-Zinda</span><span class="dest-tag">Khiva</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> April – June, September – October</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Uzbekistan." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Algeria Algiers & Sahara">
+            <img src="https://images.unsplash.com/photo-1523805009345-7448845a9e53?w=700&auto=format&fit=crop&q=80" alt="Algeria" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇩🇿 Algeria</p>
+              <h3 class="dest-name">Algiers & Sahara</h3>
+              <p class="dest-desc">North Africa's largest country — Roman ruins, Ottoman architecture, and the world's greatest desert.</p>
+              <div class="dest-highlights"><span class="dest-tag">Tassili n'Ajjer</span><span class="dest-tag">Casbah of Algiers</span><span class="dest-tag">Djemila</span><span class="dest-tag">Sahara Dunes</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> October – April</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Algeria." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Iran Tehran & Isfahan">
+            <img src="https://images.unsplash.com/photo-1596434386734-c0a19f8a8eab?w=700&auto=format&fit=crop&q=80" alt="Iran" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇮🇷 Iran</p>
+              <h3 class="dest-name">Tehran & Isfahan</h3>
+              <p class="dest-desc">Ancient Persia beckons — intricate mosques, bazaars stretching for miles, and some of the world's oldest living culture.</p>
+              <div class="dest-highlights"><span class="dest-tag">Naqsh-e Jahan Square</span><span class="dest-tag">Persepolis</span><span class="dest-tag">Tehran Bazaar</span><span class="dest-tag">Nasir al-Mulk Mosque</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> March – May, September – November</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Iran." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="dest-full-card fade-in" data-country="Kuwait Kuwait City">
+            <img src="https://images.unsplash.com/photo-1585136917228-b33f05aa6b57?w=700&auto=format&fit=crop&q=80" alt="Kuwait" class="dest-full-img" loading="lazy"/>
+            <div class="dest-full-body">
+              <p class="dest-country">🇰🇼 Kuwait</p>
+              <h3 class="dest-name">Kuwait City</h3>
+              <p class="dest-desc">A compact Gulf state with a rich pearl-diving heritage, gleaming modern towers, and one of the finest seafronts in the region.</p>
+              <div class="dest-highlights"><span class="dest-tag">Kuwait Towers</span><span class="dest-tag">Grand Mosque</span><span class="dest-tag">Failaka Island</span><span class="dest-tag">Souk Al-Mubarakiya</span></div>
+              <p class="dest-best-time"><strong>Best Time:</strong> November – March</p>
+              <a href="https://wa.me/971582120609?text=I%27d%20like%20to%20inquire%20about%20travel%20to%20Kuwait." target="_blank" class="dest-wa-link"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.533 5.846L.059 23.941l6.242-1.467A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.004-1.374l-.36-.214-3.706.871.93-3.6-.235-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inquire via WhatsApp</a>
             </div>
           </div>
 
@@ -1870,6 +2345,62 @@
               <p class="blog-excerpt">Flying internationally for the first time? From packing smart to navigating airports — here's your complete starter guide to stress-free travel.</p>
               <div class="blog-meta">
                 <span>January 2026 • 7 min read</span>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Blog 5 -->
+          <div class="blog-card fade-in" onclick="openBlog(4)">
+            <img src="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=700&auto=format&fit=crop&q=80" alt="Honeymoon Destinations" class="blog-img" loading="lazy"/>
+            <div class="blog-body">
+              <p class="blog-cat">Honeymoon Travel</p>
+              <h3 class="blog-title">Top 5 Honeymoon Destinations from UAE in 2026</h3>
+              <p class="blog-excerpt">Maldives overwater villas, Santorini sunsets, Bali jungle retreats — the world's most romantic destinations, all bookable from UAE.</p>
+              <div class="blog-meta">
+                <span>May 2026 • 6 min read</span>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Blog 6 -->
+          <div class="blog-card fade-in" onclick="openBlog(5)">
+            <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=700&auto=format&fit=crop&q=80" alt="Family Holidays" class="blog-img" loading="lazy"/>
+            <div class="blog-body">
+              <p class="blog-cat">Family Travel</p>
+              <h3 class="blog-title">Best Family Holiday Destinations in 2026</h3>
+              <p class="blog-excerpt">From Singapore's theme parks to Turkey's beaches — the destinations that work brilliantly for every age group in the family.</p>
+              <div class="blog-meta">
+                <span>June 2026 • 7 min read</span>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Blog 7 -->
+          <div class="blog-card fade-in" onclick="openBlog(6)">
+            <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=700&auto=format&fit=crop&q=80" alt="Visa Tips" class="blog-img" loading="lazy"/>
+            <div class="blog-body">
+              <p class="blog-cat">Visa & Travel Tips</p>
+              <h3 class="blog-title">UAE Residents: Countries You Can Visit Visa-Free</h3>
+              <p class="blog-excerpt">A practical guide to the 170+ destinations UAE passport holders can reach freely — and the best options for UAE residency visa holders.</p>
+              <div class="blog-meta">
+                <span>July 2026 • 5 min read</span>
+                <span class="blog-read-more">Read →</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Blog 8 -->
+          <div class="blog-card fade-in" onclick="openBlog(7)">
+            <img src="https://images.unsplash.com/photo-1500835556837-99ac94a94552?w=700&auto=format&fit=crop&q=80" alt="Hidden Gems" class="blog-img" loading="lazy"/>
+            <div class="blog-body">
+              <p class="blog-cat">Hidden Gems</p>
+              <h3 class="blog-title">Underrated Travel Destinations Worth Visiting in 2026</h3>
+              <p class="blog-excerpt">Georgia, Albania, Oman, Uzbekistan — the destinations the savvy traveler is discovering before the crowds arrive.</p>
+              <div class="blog-meta">
+                <span>August 2026 • 6 min read</span>
                 <span class="blog-read-more">Read →</span>
               </div>
             </div>
@@ -2198,6 +2729,30 @@
       window.open(waURL, '_blank');
     }
 
+
+    // ============================================================
+    // DESTINATION SEARCH
+    // ============================================================
+    function filterDestinations() {
+      const q = document.getElementById('dest-search').value.toLowerCase().trim();
+      const cards = document.querySelectorAll('#dest-full-grid .dest-full-card');
+      const clearBtn = document.getElementById('dest-clear');
+      clearBtn.style.display = q ? 'flex' : 'none';
+      let shown = 0;
+      cards.forEach(card => {
+        const text = card.getAttribute('data-country').toLowerCase();
+        const match = !q || text.includes(q);
+        card.style.display = match ? '' : 'none';
+        if (match) shown++;
+      });
+      document.getElementById('dest-shown-count').textContent = shown;
+      document.getElementById('dest-no-results').style.display = shown === 0 ? 'block' : 'none';
+    }
+    function clearDestSearch() {
+      document.getElementById('dest-search').value = '';
+      filterDestinations();
+    }
+
     // ============================================================
     // BLOG DATA
     // Full article content for each blog post
@@ -2284,6 +2839,86 @@
           <h3>Trust Your Instincts and Enjoy</h3>
           <p>International travel broadens your perspective in ways nothing else can. The world is generally safe, people are generally kind, and the experiences you'll have are worth every bit of pre-trip nervousness.</p>
           <p>SafeWave Travel is always available on WhatsApp if you have any questions before, during, or after your trip.</p>
+        `
+      }
+      ,
+      {
+        cat: 'Honeymoon Travel',
+        title: 'Top 5 Honeymoon Destinations from UAE in 2026',
+        date: 'May 2026 • 6 min read',
+        img: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=900&auto=format&fit=crop&q=80',
+        content: `
+          <p>Your honeymoon is one of the most important trips of your life. From UAE, you're perfectly positioned to reach some of the world's most romantic destinations quickly and affordably. Here are the top five choices for 2026.</p>
+          <h3>1. Maldives — The Classic Choice</h3>
+          <p>Nothing says romance like an overwater bungalow in the Maldives. The crystal-clear lagoons, house reefs teeming with colourful fish, and utter seclusion make this the world's premier honeymoon destination. Fly time from UAE: just 3–4 hours.</p>
+          <h3>2. Santorini, Greece — Sunset Paradise</h3>
+          <p>The iconic blue domes of Oia at golden hour, private infinity pools overlooking the caldera, and fresh seafood by candlelight. Santorini is romance made architecture.</p>
+          <h3>3. Bali, Indonesia — Exotic & Affordable</h3>
+          <p>For couples wanting culture, beauty, and value, Bali is unmatched. Temple ceremonies, jungle waterfalls, and rice terrace walks by day — private villa dinners by night.</p>
+          <h3>4. Amalfi Coast, Italy — Mediterranean Romance</h3>
+          <p>Pastel-coloured villages clinging to cliffs above the shimmering blue Tyrrhenian Sea. Boat trips to Capri, limoncello tastings, and handmade pasta — Italy's Amalfi Coast is pure magic.</p>
+          <h3>5. Seychelles — Untouched Paradise</h3>
+          <p>Granite boulders, talcum-powder beaches, and a lush jungle interior on islands that still feel like a discovery. Mahe and Praslin offer some of the world's finest luxury resorts.</p>
+          <p>Ready to plan your dream honeymoon? SafeWave Travel specialises in romantic getaways — contact us via WhatsApp and we'll put together a bespoke package just for you.</p>
+        `
+      },
+      {
+        cat: 'Family Travel',
+        title: 'Best Family Holiday Destinations in 2026',
+        date: 'June 2026 • 7 min read',
+        img: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=900&auto=format&fit=crop&q=80',
+        content: `
+          <p>Family travel in 2026 is smarter, more accessible, and more rewarding than ever. Whether you have toddlers or teenagers, here are the best destinations designed around family enjoyment.</p>
+          <h3>1. Turkey — History + Fun</h3>
+          <p>Turkey is exceptional for families. Kids are adored everywhere. Hot air balloon rides in Cappadocia create memories that last a lifetime. Theme parks in Antalya keep younger children entertained while adults enjoy the culture.</p>
+          <h3>2. Malaysia — Perfect Balance</h3>
+          <p>Kuala Lumpur's LEGOLAND, Sunway Lagoon water park, and the Batu Caves keep children thrilled. Meanwhile, parents can enjoy world-class dining and shopping. Beach time in Langkawi rounds out a perfect family week.</p>
+          <h3>3. Singapore — Safe, Clean & Exciting</h3>
+          <p>Universal Studios Singapore, the Night Safari, and Gardens by the Bay are world-class family attractions. Singapore is also one of the safest and most navigable cities in the world — ideal for families with younger children.</p>
+          <h3>4. UK — Educational & Exciting</h3>
+          <p>London's free museums (Natural History, Science Museum, British Museum), Harry Potter World, Legoland Windsor, and the Tower of London combine education and entertainment seamlessly. Scotland's castles spark every child's imagination.</p>
+          <h3>5. Thailand — Beaches & Adventure</h3>
+          <p>Elephant sanctuaries, island-hopping, cooking classes, and endless noodle soup — Thailand is endlessly stimulating for curious young minds and budget-conscious parents alike.</p>
+          <p>Planning a family trip? Let SafeWave Travel take care of every detail. WhatsApp us and we'll find options that work for every age group and every budget.</p>
+        `
+      },
+      {
+        cat: 'Visa & Travel Tips',
+        title: 'UAE Residents: Countries You Can Visit Visa-Free',
+        date: 'July 2026 • 5 min read',
+        img: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=900&auto=format&fit=crop&q=80',
+        content: `
+          <p>UAE residents — whether holding a UAE passport or a residency visa — enjoy remarkably broad travel access. Here's a practical guide to your best visa-free and visa-on-arrival options in 2026.</p>
+          <h3>UAE Passport Holders</h3>
+          <p>UAE nationals can access over 170 destinations without a prior visa, including all of Europe's Schengen area, the UK, the USA, Canada, and Japan. The UAE passport is one of the world's most powerful travel documents.</p>
+          <h3>UAE Resident Visa Holders</h3>
+          <p>Residents (expats) holding a valid UAE residency visa can access several countries without a separate visa, including Georgia, Malaysia, Seychelles, and Bahrain. The UAE residency visa also simplifies the application process for many other countries.</p>
+          <h3>Popular Visa-on-Arrival Destinations</h3>
+          <p>Countries including Maldives, Nepal, Sri Lanka, Thailand, Tanzania, and Kenya all offer visa-on-arrival or e-visa options for UAE residents — making spontaneous trips entirely possible.</p>
+          <h3>The Schengen Visa Opens Europe</h3>
+          <p>A single Schengen visa allows travel to 27 European countries. SafeWave Travel can guide you through the application process, which typically takes 3–6 weeks and requires documentation we'll help you prepare.</p>
+          <h3>Let Us Handle the Visa Complexity</h3>
+          <p>Visa requirements change frequently. Rather than researching each destination separately, simply WhatsApp SafeWave Travel with your passport nationality, destination, and travel dates — we'll give you an up-to-date assessment immediately.</p>
+        `
+      },
+      {
+        cat: 'Hidden Gems',
+        title: 'Underrated Travel Destinations Worth Visiting in 2026',
+        date: 'August 2026 • 6 min read',
+        img: 'https://images.unsplash.com/photo-1500835556837-99ac94a94552?w=900&auto=format&fit=crop&q=80',
+        content: `
+          <p>While everyone is heading to Paris and Bali, savvy travelers are discovering places that offer equal beauty, richer experiences, and a fraction of the crowds. Here are our top hidden gems for 2026.</p>
+          <h3>1. Georgia — The Caucasus Surprise</h3>
+          <p>Tbilisi's medieval old town, the wine caves of Kakheti, and the Caucasus Mountain landscapes rank among Europe's most beautiful — yet Georgia sees a fraction of the visitors that flow into Western Europe. Direct flights from UAE make it very accessible.</p>
+          <h3>2. Albania — Europe's Secret Coast</h3>
+          <p>The Albanian Riviera offers crystal-clear Adriatic beaches, ancient Greek ruins, and Ottoman-era hilltop towns — all at prices that feel like a decade ago. Arguably Europe's best value destination right now.</p>
+          <h3>3. Oman — Arabia's Best Secret</h3>
+          <p>Just next door to UAE, Oman is often overlooked in favour of its flashier neighbours. But Oman's dramatic fjords of Musandam, the Wahiba sand dunes, and the medieval city of Nizwa are extraordinary — and virtually crowd-free.</p>
+          <h3>4. Uzbekistan — The Silk Road Reborn</h3>
+          <p>Samarkand and Bukhara contain some of the Islamic world's greatest architecture. The turquoise-tiled Registan complex is genuinely jaw-dropping. Uzbekistan is seeing rapid tourism growth — visit before the world catches on.</p>
+          <h3>5. Ethiopia — Africa's Ancient Civilization</h3>
+          <p>Lalibela's rock-hewn churches, the Simien Mountains, and the Danakil Depression (one of Earth's most dramatic landscapes) make Ethiopia one of Africa's most rewarding and underrated destinations.</p>
+          <p>Want to go somewhere truly different? SafeWave Travel can arrange travel to all of these destinations and more. Drop us a WhatsApp message and let's plan your next adventure.</p>
         `
       }
     ];
