@@ -10,26 +10,26 @@
   <!-- Google Fonts: Playfair Display (headings) + DM Sans (body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet" />
 
   <style>
     /* =============================================
        CSS CUSTOM PROPERTIES (Design Tokens)
        ============================================= */
     :root {
-      --navy:       #0d2b6b;
-      --navy-mid:   #1a3f8f;
-      --teal:       #1bb8d4;
-      --teal-light: #5dd5ea;
+      --navy:       #0a1628;
+      --navy-mid:   #112240;
+      --teal:       #c9a84c;
+      --teal-light: #e8c876;
       --white:      #ffffff;
-      --off-white:  #f4f8fb;
-      --grey-light: #e8eef6;
-      --grey-mid:   #9aaecc;
-      --text-dark:  #0d1f3c;
-      --text-body:  #3a4e6e;
-      --shadow-sm:  0 2px 12px rgba(13,43,107,0.08);
-      --shadow-md:  0 8px 32px rgba(13,43,107,0.14);
-      --shadow-lg:  0 20px 60px rgba(13,43,107,0.18);
+      --off-white:  #f0f4f8;
+      --grey-light: #dde3ea;
+      --grey-mid:   #7a8fa6;
+      --text-dark:  #0a1628;
+      --text-body:  #2c3e5c;
+      --shadow-sm:  0 2px 12px rgba(10,22,40,0.10);
+      --shadow-md:  0 8px 32px rgba(10,22,40,0.18);
+      --shadow-lg:  0 20px 60px rgba(10,22,40,0.22);
       --radius:     14px;
       --transition: 0.35s cubic-bezier(0.4,0,0.2,1);
       --font-head:  'Playfair Display', Georgia, serif;
@@ -89,12 +89,12 @@
       padding: 14px 28px;
       border-radius: 50px;
       transition: var(--transition);
-      box-shadow: 0 4px 20px rgba(27,184,212,0.35);
+      box-shadow: 0 4px 20px rgba(201,168,76,0.35);
     }
     .btn-primary:hover {
       background: var(--navy);
       transform: translateY(-2px);
-      box-shadow: 0 8px 28px rgba(13,43,107,0.3);
+      box-shadow: 0 8px 28px rgba(10,22,40,0.3);
     }
     .btn-outline {
       display: inline-flex;
@@ -138,9 +138,9 @@
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 1000;
-      background: rgba(255,255,255,0.96);
+      background: rgba(10,22,40,0.97);
       backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(13,43,107,0.08);
+      border-bottom: 1px solid rgba(201,168,76,0.15);
       transition: box-shadow var(--transition);
     }
     #navbar.scrolled { box-shadow: var(--shadow-md); }
@@ -177,7 +177,7 @@
       font-family: var(--font-head);
       font-size: 1.05rem;
       font-weight: 700;
-      color: var(--navy);
+      color: #ffffff;
     }
     .nav-logo-text span:last-child {
       font-size: 0.65rem;
@@ -196,7 +196,7 @@
     .nav-links a {
       font-size: 0.9rem;
       font-weight: 500;
-      color: var(--text-body);
+      color: rgba(255,255,255,0.8);
       letter-spacing: 0.3px;
       transition: color var(--transition);
       cursor: pointer;
@@ -211,7 +211,7 @@
       transition: width var(--transition);
       border-radius: 2px;
     }
-    .nav-links a:hover, .nav-links a.active { color: var(--navy); }
+    .nav-links a:hover, .nav-links a.active { color: var(--teal); }
     .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
 
     /* WhatsApp nav button */
@@ -243,7 +243,7 @@
     .hamburger span {
       display: block;
       width: 24px; height: 2px;
-      background: var(--navy);
+      background: rgba(255,255,255,0.85);
       border-radius: 2px;
       transition: var(--transition);
     }
@@ -253,7 +253,7 @@
       display: none;
       position: fixed;
       top: 72px; left: 0; right: 0;
-      background: var(--white);
+      background: var(--navy);
       padding: 24px;
       border-top: 1px solid var(--grey-light);
       box-shadow: var(--shadow-md);
@@ -265,7 +265,7 @@
     .mobile-menu a {
       font-size: 1rem;
       font-weight: 500;
-      color: var(--text-dark);
+      color: rgba(255,255,255,0.85);
       padding: 8px 0;
       border-bottom: 1px solid var(--grey-light);
       cursor: pointer;
@@ -343,8 +343,8 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(27,184,212,0.2);
-      border: 1px solid rgba(93,213,234,0.5);
+      background: rgba(201,168,76,0.18);
+      border: 1px solid rgba(232,200,118,0.5);
       color: var(--teal-light);
       font-size: 0.8rem;
       font-weight: 600;
@@ -618,7 +618,7 @@
       position: absolute;
       top: -60px; right: -60px;
       width: 300px; height: 300px;
-      background: radial-gradient(circle, rgba(27,184,212,0.2) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(201,168,76,0.2) 0%, transparent 70%);
       border-radius: 50%;
     }
     .wa-banner::after {
@@ -626,7 +626,7 @@
       position: absolute;
       bottom: -80px; left: -40px;
       width: 250px; height: 250px;
-      background: radial-gradient(circle, rgba(93,213,234,0.15) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(232,200,118,0.15) 0%, transparent 70%);
       border-radius: 50%;
     }
     .wa-banner h2 {
@@ -768,7 +768,7 @@
     }
     #dest-search:focus {
       border-color: var(--teal);
-      box-shadow: 0 0 0 4px rgba(27,184,212,0.15);
+      box-shadow: 0 0 0 4px rgba(201,168,76,0.15);
     }
     #dest-search::placeholder { color: var(--grey-mid); }
     .dest-search-clear {
@@ -1087,7 +1087,7 @@
     .form-group select:focus,
     .form-group textarea:focus {
       border-color: var(--teal);
-      box-shadow: 0 0 0 3px rgba(27,184,212,0.15);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
     }
     .form-group textarea { resize: vertical; min-height: 90px; }
     .form-row {
@@ -3090,6 +3090,56 @@
       { name:'Indonesia',    lat: -5,  lon: 120 },
       { name:'New Zealand',  lat:-42,  lon: 174 },
       { name:'Argentina',    lat:-38,  lon: -63 },
+      { name:'Philippines',      lat: 13,  lon: 122 },
+      { name:'Thailand',         lat: 13,  lon: 101 },
+      { name:'Vietnam',          lat: 16,  lon: 108 },
+      { name:'Singapore',        lat:  1,  lon: 104 },
+      { name:'South Korea',      lat: 37,  lon: 128 },
+      { name:'India',            lat: 20,  lon:  77 },
+      { name:'Sri Lanka',        lat:  7,  lon:  81 },
+      { name:'Nepal',            lat: 28,  lon:  84 },
+      { name:'Pakistan',         lat: 30,  lon:  70 },
+      { name:'Azerbaijan',       lat: 40,  lon:  48 },
+      { name:'Georgia',          lat: 42,  lon:  43 },
+      { name:'Armenia',          lat: 40,  lon:  45 },
+      { name:'Uzbekistan',       lat: 41,  lon:  64 },
+      { name:'Kazakhstan',       lat: 48,  lon:  68 },
+      { name:'Bahrain',          lat: 26,  lon:  51 },
+      { name:'Kuwait',           lat: 29,  lon:  48 },
+      { name:'Iran',             lat: 32,  lon:  53 },
+      { name:'Iraq',             lat: 33,  lon:  44 },
+      { name:'Tunisia',          lat: 34,  lon:   9 },
+      { name:'Morocco',          lat: 32,  lon:  -6 },
+      { name:'Ethiopia',         lat:  9,  lon:  40 },
+      { name:'Senegal',          lat: 14,  lon: -14 },
+      { name:'Ghana',            lat:  8,  lon:  -1 },
+      { name:'Mozambique',       lat:-18,  lon:  35 },
+      { name:'Zambia',           lat:-13,  lon:  28 },
+      { name:'Botswana',         lat:-22,  lon:  24 },
+      { name:'Rwanda',           lat: -2,  lon:  30 },
+      { name:'Uganda',           lat:  1,  lon:  32 },
+      { name:'Colombia',         lat:  4,  lon: -73 },
+      { name:'Chile',            lat:-30,  lon: -71 },
+      { name:'Bolivia',          lat:-17,  lon: -65 },
+      { name:'Ecuador',          lat: -2,  lon: -77 },
+      { name:'Uruguay',          lat:-33,  lon: -56 },
+      { name:'Paraguay',         lat:-23,  lon: -58 },
+      { name:'Cuba',             lat: 22,  lon: -80 },
+      { name:'Jamaica',          lat: 18,  lon: -77 },
+      { name:'Dominican Rep.',   lat: 19,  lon: -70 },
+      { name:'Iceland',          lat: 65,  lon: -18 },
+      { name:'Norway',           lat: 62,  lon:  10 },
+      { name:'Finland',          lat: 64,  lon:  26 },
+      { name:'Sweden',           lat: 62,  lon:  16 },
+      { name:'Denmark',          lat: 56,  lon:  10 },
+      { name:'Poland',           lat: 52,  lon:  20 },
+      { name:'Czech Republic',   lat: 50,  lon:  16 },
+      { name:'Hungary',          lat: 47,  lon:  19 },
+      { name:'Romania',          lat: 46,  lon:  25 },
+      { name:'Bulgaria',         lat: 43,  lon:  25 },
+      { name:'Slovenia',         lat: 46,  lon:  15 },
+      { name:'Croatia',          lat: 45,  lon:  16 },
+      { name:'Malta',            lat: 36,  lon:  14 },
     ];
 
     function latLonTo3D(lat, lon, r) {
@@ -3193,6 +3243,10 @@
 
       // Drag interaction
       const cvs = renderer.domElement;
+      // ZOOM DISABLED — no wheel or pinch-to-zoom
+      cvs.addEventListener('wheel', e => { e.preventDefault(); e.stopPropagation(); }, { passive: false });
+      cvs.addEventListener('gesturestart', e => { e.preventDefault(); }, { passive: false });
+      cvs.addEventListener('gesturechange', e => { e.preventDefault(); }, { passive: false });
       cvs.addEventListener('mousedown', e => { isDragging = true; prevX = e.clientX; prevY = e.clientY; velX = velY = 0; }, { passive: true });
       cvs.addEventListener('touchstart', e => { isDragging = true; prevX = e.touches[0].clientX; prevY = e.touches[0].clientY; velX = velY = 0; }, { passive: true });
       window.addEventListener('mousemove', e => {
