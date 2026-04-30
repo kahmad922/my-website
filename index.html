@@ -1249,6 +1249,7 @@
         <a onclick="showPage('destinations')" id="nav-destinations">Destinations</a>
         <a onclick="showPage('blog')" id="nav-blog">Blog</a>
         <a onclick="showPage('contact')" id="nav-contact">Contact</a>
+        <a onclick="showPage('earth')" id="nav-earth" style="color:var(--teal);font-weight:600;">Explore Earth 🌍</a>
       </div>
 
       <!-- WhatsApp quick link -->
@@ -1272,6 +1273,7 @@
     <a onclick="showPage('destinations'); toggleMobileMenu()">Destinations</a>
     <a onclick="showPage('blog'); toggleMobileMenu()">Blog</a>
     <a onclick="showPage('contact'); toggleMobileMenu()">Contact & Book</a>
+    <a onclick="showPage('earth'); toggleMobileMenu()" style="color:var(--teal);font-weight:600;">Explore Earth 🌍</a>
   </div>
 
   <!-- ============================================================
@@ -2644,6 +2646,9 @@
       document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
       const navEl = document.getElementById('nav-' + id);
       if (navEl) navEl.classList.add('active');
+      // Hide footer on earth page (it's a full-screen 3D experience)
+      const footer = document.getElementById('site-footer');
+      if (footer) footer.style.display = (id === 'earth') ? 'none' : '';
       // Scroll to top
       window.scrollTo({ top: 0, behavior: 'smooth' });
       // Trigger fade-in animations for the new page
@@ -2956,5 +2961,362 @@
     });
   </script>
 
+  <!-- ============================================================
+       PAGE: EXPLORE EARTH (3D Globe)
+       ============================================================ -->
+  <div id="page-earth" class="page">
+
+    <!-- Full-screen globe wrapper -->
+    <div id="earth-wrap" style="position:relative;width:100%;height:100vh;background:#00010a;overflow:hidden;cursor:grab;">
+
+      <!-- Three.js canvas injected here by JS -->
+
+      <!-- HTML label overlay (country names float over the globe) -->
+      <div id="globe-labels" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;"></div>
+
+      <!-- Back button -->
+      <button onclick="showPage('home')" style="
+        position:absolute;top:90px;left:24px;z-index:30;
+        background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);
+        border:1px solid rgba(255,255,255,0.22);color:#fff;
+        padding:9px 20px;border-radius:50px;
+        font-family:var(--font-body);font-size:0.82rem;font-weight:600;
+        cursor:pointer;letter-spacing:0.4px;transition:background 0.3s;">
+        ← Back to Site
+      </button>
+
+      <!-- Title -->
+      <div style="position:absolute;top:86px;left:50%;transform:translateX(-50%);
+        text-align:center;pointer-events:none;z-index:20;">
+        <h1 style="font-family:var(--font-head);font-size:clamp(1.4rem,3.5vw,2.2rem);
+          color:#fff;margin:0;letter-spacing:1px;
+          text-shadow:0 2px 18px rgba(27,184,212,0.7);">Explore Our World</h1>
+        <p style="color:rgba(255,255,255,0.55);font-size:0.8rem;margin:6px 0 0;letter-spacing:1.5px;text-transform:uppercase;">
+          Drag to spin · 30 destinations
+        </p>
+      </div>
+
+      <!-- Loading spinner -->
+      <div id="globe-loader" style="
+        position:absolute;inset:0;background:#00010a;
+        display:flex;flex-direction:column;align-items:center;justify-content:center;
+        z-index:50;transition:opacity 0.7s ease;">
+        <div style="width:52px;height:52px;border:3px solid rgba(27,184,212,0.25);
+          border-top-color:#1bb8d4;border-radius:50%;
+          animation:globeSpin 0.9s linear infinite;margin-bottom:18px;"></div>
+        <p style="color:rgba(255,255,255,0.6);font-family:var(--font-body);
+          font-size:0.82rem;letter-spacing:2px;text-transform:uppercase;">Loading Earth…</p>
+      </div>
+
+    </div>
+
+  </div><!-- /page-earth -->
+
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    @keyframes globeSpin { to { transform: rotate(360deg); } }
+    #page-earth { min-height: 100vh; overflow: hidden; }
+    #nav-earth::after { background: var(--teal) !important; }
+
+    /* Country label dots on globe */
+    .globe-label {
+      position: absolute;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.2s;
+    }
+    .globe-label-dot {
+      width: 6px; height: 6px;
+      background: #5dd5ea;
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(93,213,234,0.9), 0 0 12px rgba(93,213,234,0.5);
+    }
+    .globe-label-text {
+      margin-top: 4px;
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.5px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.8);
+      white-space: nowrap;
+    }
+  </style>
+
+  <script>
+  // ================================================================
+  // CLEAN 3D GLOBE — real Earth textures, country labels, drag rotate
+  // ================================================================
+  (function() {
+    let ready = false;
+    let renderer, scene, camera, earthMesh, cloudMesh, atmoMesh;
+    let isDragging = false, prevX = 0, prevY = 0;
+    let velX = 0, velY = 0;
+    let labelContainer;
+
+    const COUNTRIES = [
+      { name:'UAE',          lat: 24,  lon:  54 },
+      { name:'Turkey',       lat: 39,  lon:  35 },
+      { name:'France',       lat: 46,  lon:   2 },
+      { name:'Japan',        lat: 36,  lon: 138 },
+      { name:'Maldives',     lat:  4,  lon:  73 },
+      { name:'Switzerland',  lat: 47,  lon:   8 },
+      { name:'Thailand',     lat: 15,  lon: 101 },
+      { name:'Italy',        lat: 42,  lon:  12 },
+      { name:'Australia',    lat:-25,  lon: 133 },
+      { name:'Brazil',       lat:-15,  lon: -48 },
+      { name:'Nepal',        lat: 28,  lon:  84 },
+      { name:'Morocco',      lat: 32,  lon:  -6 },
+      { name:'USA',          lat: 38,  lon: -97 },
+      { name:'Canada',       lat: 60,  lon: -96 },
+      { name:'Greece',       lat: 38,  lon:  23 },
+      { name:'UK',           lat: 54,  lon:  -2 },
+      { name:'Malaysia',     lat:  4,  lon: 109 },
+      { name:'Kenya',        lat:  0,  lon:  38 },
+      { name:'India',        lat: 21,  lon:  78 },
+      { name:'China',        lat: 35,  lon: 104 },
+      { name:'Russia',       lat: 61,  lon:  90 },
+      { name:'Mexico',       lat: 24,  lon:-102 },
+      { name:'South Africa', lat:-29,  lon:  25 },
+      { name:'Egypt',        lat: 26,  lon:  30 },
+      { name:'Saudi Arabia', lat: 24,  lon:  45 },
+      { name:'Spain',        lat: 40,  lon:  -4 },
+      { name:'Germany',      lat: 51,  lon:  10 },
+      { name:'Indonesia',    lat: -5,  lon: 120 },
+      { name:'New Zealand',  lat:-42,  lon: 174 },
+      { name:'Argentina',    lat:-38,  lon: -63 },
+    ];
+
+    function latLonTo3D(lat, lon, r) {
+      const phi   = (90 - lat) * Math.PI / 180;
+      const theta = (lon + 180) * Math.PI / 180;
+      return new THREE.Vector3(
+        -r * Math.sin(phi) * Math.cos(theta),
+         r * Math.cos(phi),
+         r * Math.sin(phi) * Math.sin(theta)
+      );
+    }
+
+    function initGlobe() {
+      if (ready) return;
+      ready = true;
+
+      const wrap = document.getElementById('earth-wrap');
+      const W = wrap.clientWidth, H = wrap.clientHeight;
+
+      // Renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(W, H);
+      wrap.appendChild(renderer.domElement);
+      renderer.domElement.style.cssText = 'display:block;width:100%;height:100%;';
+
+      // Scene & camera
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x00010a);
+      camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 800);
+      camera.position.z = 2.5;
+
+      // Stars
+      const sg = new THREE.BufferGeometry();
+      const sv = new Float32Array(6000);
+      for (let i = 0; i < 6000; i++) sv[i] = (Math.random() - 0.5) * 500;
+      sg.setAttribute('position', new THREE.BufferAttribute(sv, 3));
+      scene.add(new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xffffff, size: 0.25, transparent: true, opacity: 0.75 })));
+
+      // Textures
+      const tl = new THREE.TextureLoader();
+      const dayTex   = tl.load('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg');
+      const nightTex = tl.load('https://unpkg.com/three-globe/example/img/earth-night.jpg');
+      const bumpTex  = tl.load('https://unpkg.com/three-globe/example/img/earth-topology.png');
+      const specTex  = tl.load('https://unpkg.com/three-globe/example/img/earth-water.png');
+      const cloudTex = tl.load('https://unpkg.com/three-globe/example/img/earth-clouds.png');
+
+      // Earth
+      earthMesh = new THREE.Mesh(
+        new THREE.SphereGeometry(1, 72, 72),
+        new THREE.MeshPhongMaterial({
+          map: dayTex,
+          bumpMap: bumpTex, bumpScale: 0.012,
+          specularMap: specTex,
+          specular: new THREE.Color(0x224466),
+          shininess: 22,
+          emissiveMap: nightTex,
+          emissive: new THREE.Color(0xff8800),
+          emissiveIntensity: 0.55,
+        })
+      );
+      scene.add(earthMesh);
+
+      // Clouds
+      cloudMesh = new THREE.Mesh(
+        new THREE.SphereGeometry(1.007, 48, 48),
+        new THREE.MeshPhongMaterial({ map: cloudTex, transparent: true, opacity: 0.35, depthWrite: false })
+      );
+      scene.add(cloudMesh);
+
+      // Atmosphere glow
+      atmoMesh = new THREE.Mesh(
+        new THREE.SphereGeometry(1.04, 48, 48),
+        new THREE.MeshLambertMaterial({ color: 0x3399ff, transparent: true, opacity: 0.08, side: THREE.FrontSide, depthWrite: false })
+      );
+      scene.add(atmoMesh);
+
+      // Outer halo
+      scene.add(new THREE.Mesh(
+        new THREE.SphereGeometry(1.10, 48, 48),
+        new THREE.MeshLambertMaterial({ color: 0x66aaff, transparent: true, opacity: 0.04, side: THREE.BackSide, depthWrite: false })
+      ));
+
+      // Lights
+      const sun = new THREE.DirectionalLight(0xfff0dd, 1.6);
+      sun.position.set(5, 3, 5);
+      scene.add(sun);
+      scene.add(new THREE.AmbientLight(0x111133, 0.5));
+
+      // Label container (HTML overlay)
+      labelContainer = document.getElementById('globe-labels');
+
+      // Build label elements
+      COUNTRIES.forEach((c, i) => {
+        const el = document.createElement('div');
+        el.className = 'globe-label';
+        el.id = 'lbl-' + i;
+        el.innerHTML = '<div class="globe-label-dot"></div><div class="globe-label-text">' + c.name + '</div>';
+        labelContainer.appendChild(el);
+      });
+
+      // Drag interaction
+      const cvs = renderer.domElement;
+      cvs.addEventListener('mousedown', e => { isDragging = true; prevX = e.clientX; prevY = e.clientY; velX = velY = 0; }, { passive: true });
+      cvs.addEventListener('touchstart', e => { isDragging = true; prevX = e.touches[0].clientX; prevY = e.touches[0].clientY; velX = velY = 0; }, { passive: true });
+      window.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        const dx = e.clientX - prevX, dy = e.clientY - prevY;
+        velX = dx * 0.004; velY = dy * 0.004;
+        earthMesh.rotation.y += dx * 0.006;
+        earthMesh.rotation.x = Math.max(-1.2, Math.min(1.2, earthMesh.rotation.x + dy * 0.006));
+        cloudMesh.rotation.y = earthMesh.rotation.y + 0.01;
+        cloudMesh.rotation.x = earthMesh.rotation.x;
+        prevX = e.clientX; prevY = e.clientY;
+      });
+      window.addEventListener('touchmove', e => {
+        if (!isDragging) return;
+        const dx = e.touches[0].clientX - prevX, dy = e.touches[0].clientY - prevY;
+        velX = dx * 0.004; velY = dy * 0.004;
+        earthMesh.rotation.y += dx * 0.006;
+        earthMesh.rotation.x = Math.max(-1.2, Math.min(1.2, earthMesh.rotation.x + dy * 0.006));
+        cloudMesh.rotation.y = earthMesh.rotation.y + 0.01;
+        cloudMesh.rotation.x = earthMesh.rotation.x;
+        prevX = e.touches[0].clientX; prevY = e.touches[0].clientY;
+      }, { passive: true });
+      window.addEventListener('mouseup', () => { isDragging = false; });
+      window.addEventListener('touchend', () => { isDragging = false; });
+
+      // Hide loader
+      setTimeout(() => {
+        const ld = document.getElementById('globe-loader');
+        ld.style.opacity = '0';
+        setTimeout(() => ld.style.display = 'none', 700);
+      }, 1400);
+
+      loop();
+    }
+
+    let tick = 0;
+    function loop() {
+      requestAnimationFrame(loop);
+      tick++;
+
+      // Auto-rotate or inertia
+      if (!isDragging) {
+        if (Math.abs(velX) > 0.0002 || Math.abs(velY) > 0.0002) {
+          earthMesh.rotation.y += velX;
+          earthMesh.rotation.x = Math.max(-1.2, Math.min(1.2, earthMesh.rotation.x + velY));
+          cloudMesh.rotation.y = earthMesh.rotation.y + 0.01;
+          cloudMesh.rotation.x = earthMesh.rotation.x;
+          velX *= 0.93; velY *= 0.93;
+        } else {
+          earthMesh.rotation.y  += 0.0015;
+          cloudMesh.rotation.y  += 0.0019;
+        }
+      }
+
+      // Atmosphere shimmer
+      if (atmoMesh) atmoMesh.material.opacity = 0.07 + 0.025 * Math.sin(tick * 0.025);
+
+      // Project country labels onto screen
+      if (labelContainer && earthMesh) {
+        const rect = renderer.domElement.getBoundingClientRect();
+        const W = rect.width, H = rect.height;
+
+        COUNTRIES.forEach((c, i) => {
+          const el = document.getElementById('lbl-' + i);
+          if (!el) return;
+
+          // Get 3D position of label on the rotating earth
+          const localPos = latLonTo3D(c.lat, c.lon, 1.05);
+          const worldPos = localPos.clone().applyEuler(earthMesh.rotation);
+
+          // Check if on visible hemisphere (facing camera)
+          const camDir = new THREE.Vector3(0, 0, 1); // camera is at +z
+          const dot = worldPos.clone().normalize().dot(camDir);
+
+          if (dot < 0.05) {
+            el.style.opacity = '0';
+            return;
+          }
+
+          // Project to screen
+          const projected = worldPos.clone().project(camera);
+          const sx = (projected.x * 0.5 + 0.5) * W + rect.left;
+          const sy = (-projected.y * 0.5 + 0.5) * H + rect.top;
+
+          // Fade near edges
+          const fade = Math.min(1, (dot - 0.05) / 0.25);
+          el.style.opacity = fade.toFixed(2);
+          el.style.left = sx + 'px';
+          el.style.top  = sy + 'px';
+        });
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    // Resize handler
+    window.addEventListener('resize', () => {
+      if (!renderer || !camera) return;
+      const wrap = document.getElementById('earth-wrap');
+      if (!wrap) return;
+      const W = wrap.clientWidth, H = wrap.clientHeight;
+      renderer.setSize(W, H);
+      camera.aspect = W / H;
+      camera.updateProjectionMatrix();
+    });
+
+    // Hook into showPage
+    const _orig = window.showPage;
+    window.showPage = function(id) {
+      _orig(id);
+      if (id === 'earth') {
+        setTimeout(() => {
+          if (!ready) initGlobe();
+          else if (renderer) {
+            const wrap = document.getElementById('earth-wrap');
+            renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+            camera.aspect = wrap.clientWidth / wrap.clientHeight;
+            camera.updateProjectionMatrix();
+          }
+        }, 60);
+      }
+    };
+  })();
+  </script>
+
 </body>
-</html>
+
